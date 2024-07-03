@@ -171,6 +171,3 @@ We welcome contributions from the community! Here’s how you can help:
 3. Commit your changes (`git commit -am 'Add some feature'`).
 4. Push to the branch (`git push origin feature/your-feature`).
 5. Create a new Pull Request.
-
-
-Feel free to customize the README.md further to suit your project's needs.
