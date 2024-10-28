@@ -1,173 +1,97 @@
-```markdown
-# DejaVue
+# Dejavue
 
-DejaVue is a Python-based application designed to simulate and visualize historical events, future predictions, and alternate timelines. Built using Django and Django Rest Framework (DRF), DejaVue leverages data science, machine learning, and interactive visualizations to offer users a unique way to explore and understand the past, present, and future.
+Application designed to simulate and visualize historical events, future predictions, or alternate timelines. By leveraging data science, machine learning, and interactive visualizations, it allows users to "travel" through time, exploring different scenarios and outcomes.
 
-## Features
+[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-- **Historical Replay**: Simulate and visualize historical events.
-- **Predictive Modeling**: Use machine learning to predict future events and trends.
-- **Alternate Timelines**: Explore alternate outcomes of historical events.
-- **Interactive Visualizations**: High-quality graphs and charts for data representation.
-- **Educational Tool**: Enhance learning experiences with interactive lessons and quizzes.
-- **Community Contributions**: Open-source platform for community-driven enhancements.
+License: MIT
 
-## Project Structure
+## Settings
 
-```plaintext
-DejaVue/
-├── README.md
-├── requirements.txt
-├── manage.py
-├── dejavue/
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   ├── wsgi.py
-│   ├── asgi.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── predictive_model.py
-│   │   └── alternate_timeline.py
-│   ├── visualizations/
-│   │   ├── __init__.py
-│   │   └── visualize.py
-│   ├── data/
-│   │   ├── __init__.py
-│   │   └── data_loader.py
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   └── helpers.py
-│   ├── views/
-│   │   ├── __init__.py
-│   │   └── views.py
-│   ├── serializers/
-│   │   ├── __init__.py
-│   │   └── predictive_model_serializer.py
-│   └── tests/
-│       ├── __init__.py
-│       └── test_views.py
-└── .gitignore
-```
+Moved to [settings](https://cookiecutter-django.readthedocs.io/en/latest/1-getting-started/settings.html).
 
-## Installation
+## Basic Commands
 
-### Prerequisites
+### Setting Up Your Users
 
-- Python 3.7+
-- Django 3.2+
-- pip (Python package installer)
+- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
 
-### Steps
+- To create a **superuser account**, use this command:
 
-1. Clone the repository:
+      $ python manage.py createsuperuser
 
-```sh
-git clone https://github.com/yourusername/dejavue.git
+For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+
+### Type checks
+
+Running type checks with mypy:
+
+    $ mypy dejavue
+
+### Test coverage
+
+To run the tests, check your test coverage, and generate an HTML coverage report:
+
+    $ coverage run -m pytest
+    $ coverage html
+    $ open htmlcov/index.html
+
+#### Running tests with pytest
+
+    $ pytest
+
+### Live reloading and Sass CSS compilation
+
+Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally.html#using-webpack-or-gulp).
+
+### Celery
+
+This app comes with Celery.
+
+To run a celery worker:
+
+```bash
 cd dejavue
+celery -A config.celery_app worker -l info
 ```
 
-2. Create a virtual environment and activate it:
+Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
 
-```sh
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
+
+```bash
+cd dejavue
+celery -A config.celery_app beat
 ```
 
-3. Install the dependencies:
+or you can embed the beat service inside a worker with the `-B` option (not recommended for production use):
 
-```sh
-pip install -r requirements.txt
+```bash
+cd dejavue
+celery -A config.celery_app worker -B -l info
 ```
 
-4. Apply migrations to set up the database:
+### Email Server
 
-```sh
-python manage.py migrate
-```
+In development, it is often nice to be able to see emails that are being sent from your application. If you choose to use [Mailpit](https://github.com/axllent/mailpit) when generating the project a local SMTP server with a web interface will be available.
 
-5. Run the development server:
+1.  [Download the latest Mailpit release](https://github.com/axllent/mailpit/releases) for your OS.
 
-```sh
-python manage.py runserver
-```
+2.  Copy the binary file to the project root.
 
-6. Access the application at `http://127.0.0.1:8000/`.
+3.  Make it executable:
 
-## Usage
+        $ chmod +x mailpit
 
-### Endpoints
+4.  Spin up another terminal window and start it there:
 
-- **Home**: `GET /`
-  - Returns a welcome message.
-- **Predict**: `GET /predict/`
-  - Returns a prediction using a basic predictive model.
-- **Visualize**: `GET /visualize/`
-  - Returns a base64 encoded URL of a sample plot.
+        ./mailpit
 
-### Example Requests
+5.  Check out <http://127.0.0.1:8025/> to see how it goes.
 
-- **Home**:
+Now you have your own mail server running locally, ready to receive whatever you send it.
 
-```sh
-curl http://127.0.0.1:8000/
-```
+## Deployment
 
-- **Predict**:
-
-```sh
-curl http://127.0.0.1:8000/predict/
-```
-
-- **Visualize**:
-
-```sh
-curl http://127.0.0.1:8000/visualize/
-```
-
-## Project Components
-
-### Models
-
-- **PredictiveModel** (`dejavue/models/predictive_model.py`)
-  - Implements a basic linear regression model using scikit-learn.
-
-### Views
-
-- **PredictiveModelView** (`dejavue/views/views.py`)
-  - API view that returns predictions from the predictive model.
-- **VisualizeView** (`dejavue/views/views.py`)
-  - API view that returns a base64 encoded plot image.
-
-### Visualizations
-
-- **create_plot** (`dejavue/visualizations/visualize.py`)
-  - Generates a sample plot and returns it as a base64 encoded string.
-
-### Data
-
-- **DataLoader** (`dejavue/data/data_loader.py`)
-  - Utility for loading data from CSV files.
-
-### Utilities
-
-- **Helpers** (`dejavue/utils/helpers.py`)
-  - Placeholder for additional helper functions.
-
-## Testing
-
-Run tests using:
-
-```sh
-python manage.py test
-```
-
-## Contributing
-
-We welcome contributions from the community! Here’s how you can help:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Commit your changes (`git commit -am 'Add some feature'`).
-4. Push to the branch (`git push origin feature/your-feature`).
-5. Create a new Pull Request.
+The following details how to deploy this application.

@@ -1,30 +1,34 @@
-from django.test import RequestFactory
+import pytest
+from rest_framework.test import APIRequestFactory
 
 from dejavue.users.api.views import UserViewSet
 from dejavue.users.models import User
 
 
 class TestUserViewSet:
-    def test_get_queryset(self, user: User, rf: RequestFactory):
+    @pytest.fixture
+    def api_rf(self) -> APIRequestFactory:
+        return APIRequestFactory()
+
+    def test_get_queryset(self, user: User, api_rf: APIRequestFactory):
         view = UserViewSet()
-        request = rf.get("/fake-url/")
+        request = api_rf.get("/fake-url/")
         request.user = user
 
         view.request = request
 
         assert user in view.get_queryset()
 
-    def test_me(self, user: User, rf: RequestFactory):
+    def test_me(self, user: User, api_rf: APIRequestFactory):
         view = UserViewSet()
-        request = rf.get("/fake-url/")
+        request = api_rf.get("/fake-url/")
         request.user = user
 
         view.request = request
 
-        response = view.me(request)
+        response = view.me(request)  # type: ignore[call-arg, arg-type, misc]
 
         assert response.data == {
-            "username": user.username,
+            "url": f"http://testserver/api/users/{user.pk}/",
             "name": user.name,
-            "url": f"http://testserver/api/users/{user.username}/",
         }
