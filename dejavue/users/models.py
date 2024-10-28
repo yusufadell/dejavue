@@ -1,7 +1,8 @@
-
 from typing import ClassVar
 
 from django.contrib.auth.models import AbstractUser
+from django.db.models import JSONField
+from django.db import models
 from django.db.models import CharField
 from django.db.models import EmailField
 from django.urls import reverse
@@ -37,3 +38,51 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"pk": self.id})
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    interest_areas = models.ManyToManyField(
+        "events.HistoricalEvent",
+        blank=True,
+    )
+    created_scenarios = models.ManyToManyField(
+        "events.Scenario",
+        related_name="created_by_user",
+    )
+    viewed_events = models.ManyToManyField(
+        "events.HistoricalEvent",
+        related_name="viewed_by",
+    )
+
+    def __str__(self):
+        return self.user.username
+
+
+class Achievement(models.Model):
+    """Achievements that users can earn"""
+
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField()
+
+    def __str__(self):
+        return self.name
+
+
+class UserProgress(models.Model):
+    """Track user learning progress"""
+
+    knowledge_score = models.FloatField()
+    learning_path = JSONField()
+
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    topics_mastered = models.ManyToManyField(
+        "events.Category",
+    )
+    achievements = models.ManyToManyField(
+        "users.Achievement",
+    )
+
+    def __str__(self):
+        return self.user
