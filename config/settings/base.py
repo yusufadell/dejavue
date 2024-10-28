@@ -53,6 +53,7 @@ DATABASES = {
     ),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -88,11 +89,16 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "taggit",
 ]
 
 LOCAL_APPS = [
     "dejavue.users",
     # Your stuff: custom apps go here
+    "dejavue.core",
+    "dejavue.events",
+    "dejavue.timeline",
+    "dejavue.interactions",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
